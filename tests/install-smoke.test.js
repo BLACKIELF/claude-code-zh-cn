@@ -140,6 +140,9 @@ function createInstallSource(tmpRoot, invokedFile, nativeVersion = "2.1.116", op
     `#!/usr/bin/env node
 const fs = require("node:fs");
 const crypto = require("node:crypto");
+// 原生事务既通过 CLI 调用 helper，也导入其文件替换包装器。
+module.exports = { withWindowsFileRetry: operation => operation() };
+if (require.main === module) {
 const cmd = process.argv[2];
 if (cmd === "detect") {
   process.stdout.write("native-bun:" + fs.realpathSync(process.argv[3]));
@@ -163,6 +166,7 @@ if (cmd === "detect") {
   process.stdout.write(fs.realpathSync(process.argv[3]));
 } else {
   process.exit(1);
+}
 }
 `
   );
